@@ -10,8 +10,8 @@ services:
       depends_on:
         - "molgenis"
       environment:
-        - http_proxy=http://www-int2:80
-        - https_proxy=http://www-int2:80
+        - http_proxy=http://www-int2.dkfz-heidelberg.de:80
+        - https_proxy=http://www-int2.dkfz-heidelberg.de:80
     molgenis:
       image: ${BACKEND_REGISTRY}:${BACKEND_TAG}
 #      image: molgenis/molgenis-app:8.6.2
@@ -45,7 +45,7 @@ services:
         - "5432"
       volumes:
         - db-data:/var/lib/postgresql/data
-        - /db-dump/:/dump
+        - /data/molgenis-db-dump/:/dump
       command: -c 'shared_buffers=256MB' -c 'max_locks_per_transaction=1024'
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:5.5.3
