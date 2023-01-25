@@ -8,6 +8,9 @@ services:
         - ./backend.conf:/etc/nginx/proxy.d/backend.conf
       depends_on:
         - "molgenis"
+      environment:
+        - http_proxy=http://www-int2:80
+        - https_proxy=http://www-int2:80
     molgenis:
       image: ${BACKEND_REGISTRY}:${BACKEND_TAG}
       environment:
@@ -26,6 +29,8 @@ services:
         - "CATALINA_OPTS=-Xmx1g -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled"
       expose:
         - "8080"
+      ports:
+        - "8081:8080"
       volumes:
         - app-data:/opt/molgenis
       depends_on:
@@ -40,6 +45,7 @@ services:
         - "5432"
       volumes:
         - db-data:/var/lib/postgresql/data
+        - /root/molgenis-db:/dump
       command: -c 'shared_buffers=256MB' -c 'max_locks_per_transaction=1024' 
     elasticsearch:
         image: docker.elastic.co/elasticsearch/elasticsearch:5.5.3
