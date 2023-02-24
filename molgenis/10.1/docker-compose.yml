@@ -6,6 +6,12 @@ services:
       - "80:80"
     volumes:
       - ./backend.conf:/etc/nginx/proxy.d/backend.conf
+      - ./frontend.conf:/etc/nginx/conf.d/frontend.conf
+      - ./lts-molgenis-only.conf:/etc/nginx/proxy.d/lts.conf
+      - ./empty-replacement.conf:/etc/nginx/proxy.d/common.conf
+      - ./node_modules/@molgenis:/usr/share/nginx/html/@molgenis
+      - ./node_modules/@molgenis-ui:/usr/share/nginx/html/@molgenis-ui
+      - ./node_modules/@molgenis-ui/components-library/styleguide:/usr/share/nginx/html/styleguide
     depends_on:
       - "molgenis"
   molgenis:
@@ -15,7 +21,7 @@ services:
       - environment=production
       - molgenis.home=/home/molgenis
       - opencpu.uri.host=opencpu
-      - elasticsearch.hosts=host.docker.internal:9200
+      - elasticsearch.hosts=elasticsearch:9200
       - db_uri=jdbc:postgresql://postgres/molgenis
       - db_user=molgenis
       - db_password=molgenis
@@ -35,7 +41,6 @@ services:
     depends_on:
       - postgres
       - elasticsearch
-
   postgres:
     image: postgres:11-alpine
     environment:
@@ -55,6 +60,7 @@ services:
       - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - ingest.geoip.downloader.enabled=false 
     ulimits:
       memlock:
         soft: -1
